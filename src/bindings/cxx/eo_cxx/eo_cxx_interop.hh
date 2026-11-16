@@ -760,6 +760,13 @@ inline efl::eina::value_view convert_to_return(Eina_Value* value, tag<Eina_Value
 {
   return efl::eina::value_view{value};
 }
+/* A value C passes by value to a callback: the view is on the caller's value,
+ * not on a copy that dies with this call (the generic by-value overload above
+ * would take it by copy and leave the view dangling). */
+inline efl::eina::value_view convert_to_return(Eina_Value const& value, tag<Eina_Value const, efl::eina::value_view const>)
+{
+  return efl::eina::value_view{const_cast<Eina_Value*>(&value)};
+}
 inline efl::eina::value_view convert_to_return(Eina_Value const* value, tag<Eina_Value const*, efl::eina::value_view const>)
 {
   return efl::eina::value_view{const_cast<Eina_Value*>(value)};

@@ -7,19 +7,60 @@ function Fnptr_Text_Func {
 };
 
 function Fnptr_Int_Func {
-   [[A callback taking and returning an int. @since 1.66]]
+   [[A callback taking and returning an int, whose parameter is named
+     like a local of the generated C++ caller. @since 1.66]]
    params {
-      @in x: int; [[The argument.]]
+      @in fw: int; [[The argument.]]
    }
    return: int; [[The result.]]
 };
 
 function Fnptr_Twice_Func {
-   [[Another callback type, so a method can take two different ones. @since 1.66]]
+   [[Another callback type, so a method can take two different ones. Its
+     parameter is named like the data parameter of the generated caller.
+     @since 1.66]]
    params {
-      @in x: int; [[The argument.]]
+      @in cxx_call_data: int; [[The argument.]]
    }
    return: int; [[The result.]]
+};
+
+function Fnptr_Visit_Func {
+   [[A callback taking an object and a string. @since 1.66]]
+   params {
+      @in obj: Fnptr; [[The object the callback is issued on.]]
+      @in text: string; [[A string.]]
+      @in n: int; [[An int.]]
+   }
+   return: int; [[The result.]]
+};
+
+function Fnptr_Format_Func {
+   [[A callback shaped like Efl.Ui.Format_Func: it writes into a buffer of the
+     caller's and reads a value the caller keeps. @since 1.66]]
+   params {
+      @in str: strbuf; [[The buffer to write into.]]
+      @in value: const(any_value); [[The value to format.]]
+   }
+   return: bool; [[Whether it worked.]]
+};
+
+function Fnptr_Out_Func {
+   [[A callback with an out parameter, which the C++ binding does not map. No
+     method takes it: it is here so the generated header, which declares a
+     wrapper for it that refuses to be used, is compiled with every test.
+     @since 1.66]]
+   params {
+      @out r: int; [[The result.]]
+   }
+};
+
+function Fnptr_Owned_Buffer_Func {
+   [[A callback taking a strbuf it owns, which the C++ binding does not map
+     either; here for the same reason. @since 1.66]]
+   params {
+      @in str: strbuf @move; [[The buffer, which the callback frees.]]
+   }
 };
 
 class Fnptr extends Efl.Object {
@@ -48,6 +89,22 @@ class Fnptr extends Efl.Object {
             @in value: int; [[The value to pass them.]]
          }
          return: int; [[The sum of both results.]]
+      }
+      format {
+         [[Calls $cb with a buffer and the int 42, and returns 1 when what $cb
+           wrote into the buffer is "value 42", 0 when it is anything else
+           and -1 when $cb failed.]]
+         params {
+            @in cb: Fnptr_Format_Func; [[Called with the buffer and the value.]]
+         }
+         return: int; [[1 when the buffer holds what is expected.]]
+      }
+      visit {
+         [[Calls $cb on itself with a string and an int, and returns its result.]]
+         params {
+            @in cb: Fnptr_Visit_Func; [[Called with this object.]]
+         }
+         return: int; [[What $cb returned.]]
       }
    }
 }

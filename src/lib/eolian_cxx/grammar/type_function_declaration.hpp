@@ -78,28 +78,74 @@ struct type_function_declaration_generator {
            c_args.push_back(arg);
         }
       if (!as_generator(
-             scope_tab << "static " << string << " caller(void *cxx_call_data"
+             scope_tab << "static " << string << " caller(void *__eolian_cxx_data"
              << *(", " << string) << ") {\n"
-             << scope_tab << scope_tab << "auto fw = static_cast<function_wrapper<"
-             << string << ", F, ::efl::eolian::" << string << "__function_tag>*>(cxx_call_data);\n"
+             << scope_tab << scope_tab << "auto __eolian_cxx_fw = static_cast<function_wrapper<"
+             << string << ", F, ::efl::eolian::" << string << "__function_tag>*>(__eolian_cxx_data);\n"
              ).generate(sink, std::make_tuple(f.return_type.c_type, c_args, f.c_name, f.c_name), ctx))
         return false;
 
-      if (f.return_type != attributes::void_
-          && !as_generator(scope_tab << scope_tab << "auto __return_value =\n")
-          .generate(sink, attributes::unused, ctx))
-        return false;
+      /* Each C argument reaches the callable converted as a getter result is:
+       * an object is a wrapper holding a reference of its own, a string a
+       * string. Both are temporaries, so a callable takes them by value or by
+       * const reference.
+       *
+       * A strbuf is not converted: the callable writes to it and the text has
+       * to reach C's buffer, so it is wrapped in a named local. An argument
+       * with no conversion back to C (out, inout, an owned strbuf) is refused
+       * by a static_assert. The locals of the caller carry a prefix no
+       * parameter name can take.
+       */
+      {
+         std::string call = "__eolian_cxx_fw->_cxx_func(";
+         bool first = true;
+         for (auto const& param : f.parameters)
+           {
+              if ((param.direction == attributes::parameter_direction::out)
+                  || (param.direction == attributes::parameter_direction::inout))
+                {
+                   if (!as_generator(scope_tab << scope_tab
+                                     << "static_assert(sizeof(F) == 0,\n"
+                                     << scope_tab << scope_tab << scope_tab
+                                     << "\"this callback has an out or inout parameter, which the C++ binding does not map; \"\n"
+                                     << scope_tab << scope_tab << scope_tab
+                                     << "\"it cannot be used from C++\");\n")
+                       .generate(sink, attributes::unused, ctx))
+                     return false;
+                }
 
-      if (!f.parameters.empty())
-        {
-           std::vector<attributes::parameter_def> params;
-           for (auto itr = f.parameters.begin() + 1; itr != f.parameters.end(); itr++)
-             params.push_back(*itr);
-           if (!as_generator(
-                  scope_tab << scope_tab << "fw->_cxx_func(" << parameter_as_argument << *(", " << parameter_as_argument) << ");\n"
-                  ).generate(sink, std::make_tuple(*f.parameters.begin(), params), ctx))
-               return false;
-        }
+              std::string arg;
+              if (param.type.c_type == "Eina_Strbuf *")
+                {
+                   if (param.type.has_own
+                       && !as_generator(scope_tab << scope_tab
+                                        << "static_assert(sizeof(F) == 0,\n"
+                                        << scope_tab << scope_tab << scope_tab
+                                        << "\"this callback takes a strbuf it owns, which the C++ binding does not map; \"\n"
+                                        << scope_tab << scope_tab << scope_tab
+                                        << "\"it cannot be used from C++\");\n")
+                            .generate(sink, attributes::unused, ctx))
+                     return false;
+                   arg = "__strbuf_" + param.param_name;
+                   if (!as_generator(scope_tab << scope_tab << "::efl::eina::strbuf_wrapper " << string << "(" << string << ");\n")
+                       .generate(sink, std::make_tuple(arg, param.param_name), ctx))
+                     return false;
+                }
+              else if (!as_generator(" ::efl::eolian::convert_to_return< ::efl::eolian::return_traits<"
+                                     << type << ">::type>(" << string << ")")
+                       .generate(std::back_inserter(arg), std::make_tuple(param.type, param.param_name), ctx))
+                return false;
+              call += (first ? "" : ", ") + arg;
+              first = false;
+           }
+         call += ");\n";
+         if (f.return_type != attributes::void_
+             && !as_generator(scope_tab << scope_tab << "auto __return_value =\n")
+                  .generate(sink, attributes::unused, ctx))
+           return false;
+         if (!as_generator(scope_tab << scope_tab << string).generate(sink, call, ctx))
+           return false;
+      }
 
       /* convert_to_c<c_type, cxx_type[, own]>, as the argument converter. */
       if (f.return_type != attributes::void_)
