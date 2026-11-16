@@ -330,8 +330,9 @@ _efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *root, unsigned int index,
 }
 
 // Stores the content of a block in the list node that holds it, or at the end
-// of the list when it is the one after the last.
-static void
+// of the list when it is the one after the last. False if it could not be
+// compressed, and what was in the list is then what it was.
+static Eina_Bool
 _efl_ui_exact_model_block_store(Eina_List **compressed, Eina_List *l,
                                 unsigned int block, unsigned int *buffer)
 {
@@ -341,16 +342,18 @@ _efl_ui_exact_model_block_store(Eina_List **compressed, Eina_List *l,
 
    if (!l)
      {
+        unsigned int count = eina_list_count(*compressed);
+
         *compressed = _efl_ui_exact_model_slot_compress(block, *compressed, buffer);
-        return;
+        return eina_list_count(*compressed) > count;
      }
 
    tbuf = eina_binbuf_manage_new((unsigned char *) buffer,
                                  EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
-   if (!tbuf) return;
+   if (!tbuf) return EINA_FALSE;
    cbuf = emile_compress(tbuf, EMILE_LZ4, EMILE_COMPRESSOR_FAST);
    eina_binbuf_free(tbuf);
-   if (!cbuf) return;
+   if (!cbuf) return EINA_FALSE;
 
    old = eina_list_data_get(l);
    eina_list_data_set(l, cbuf);
@@ -362,6 +365,7 @@ _efl_ui_exact_model_block_store(Eina_List **compressed, Eina_List *l,
      {
         _efl_ui_exact_model_zero_unref();
      }
+   return EINA_TRUE;
 }
 
 static void
@@ -388,8 +392,9 @@ _efl_ui_exact_model_block_load(Eina_List *l, unsigned int *buffer)
 // A row is inserted at index: every size from there on is one row further, and
 // the row that is now at index has none. Only the blocks from the one holding
 // index on are touched, and the blocks of zeros that the shift does not reach
-// are left alone.
-static void
+// are left alone. False if a block could not be stored: the list is then
+// half moved, and is not to be used.
+static Eina_Bool
 _efl_ui_exact_model_list_insert(Eina_List **compressed, unsigned int index)
 {
    unsigned int buffer[EFL_UI_EXACT_MODEL_CONTENT];
@@ -400,7 +405,7 @@ _efl_ui_exact_model_list_insert(Eina_List **compressed, unsigned int index)
 
    l = eina_list_nth_list(*compressed, block);
    // Everything from here on is zero, and stays so
-   if (!l) return;
+   if (!l) return EINA_TRUE;
 
    for (;; block++)
      {
@@ -416,7 +421,8 @@ _efl_ui_exact_model_list_insert(Eina_List **compressed, unsigned int index)
                 (EFL_UI_EXACT_MODEL_CONTENT - 1 - start) * sizeof (unsigned int));
         buffer[start] = carry;
         carry = out;
-        _efl_ui_exact_model_block_store(compressed, l, block, buffer);
+        if (!_efl_ui_exact_model_block_store(compressed, l, block, buffer))
+          return EINA_FALSE;
 
      advance:
         start = 0;
@@ -427,32 +433,36 @@ _efl_ui_exact_model_list_insert(Eina_List **compressed, unsigned int index)
                {
                   memset(buffer, 0, sizeof (buffer));
                   buffer[0] = carry;
-                  _efl_ui_exact_model_block_store(compressed, NULL, block + 1, buffer);
+                  if (!_efl_ui_exact_model_block_store(compressed, NULL, block + 1, buffer))
+                    return EINA_FALSE;
                }
              break;
           }
         l = next;
      }
+   return EINA_TRUE;
 }
 
 // A row is removed at index: every size after it is one row closer. What the
-// size of the row was is returned.
-static unsigned int
-_efl_ui_exact_model_list_remove(Eina_List *compressed, unsigned int index)
+// size of the row was is given back. False if a block could not be stored: the
+// list is then half moved, and is not to be used.
+static Eina_Bool
+_efl_ui_exact_model_list_remove(Eina_List *compressed, unsigned int index,
+                                unsigned int *removed_size)
 {
    unsigned int bufs[2][EFL_UI_EXACT_MODEL_CONTENT];
    unsigned int block = index / EFL_UI_EXACT_MODEL_CONTENT;
    unsigned int start = index % EFL_UI_EXACT_MODEL_CONTENT;
-   unsigned int removed;
    unsigned int cur = 0;
    Eina_List *l;
 
+   *removed_size = 0;
    l = eina_list_nth_list(compressed, block);
    // Never written, so never measured
-   if (!l) return 0;
+   if (!l) return EINA_TRUE;
 
    _efl_ui_exact_model_block_load(l, bufs[cur]);
-   removed = bufs[cur][start];
+   *removed_size = bufs[cur][start];
    for (;; block++)
      {
         Eina_List *next = eina_list_next(l);
@@ -467,14 +477,32 @@ _efl_ui_exact_model_list_remove(Eina_List *compressed, unsigned int index)
              memmove(bufs[cur] + start, bufs[cur] + start + 1,
                      (EFL_UI_EXACT_MODEL_CONTENT - 1 - start) * sizeof (unsigned int));
              bufs[cur][EFL_UI_EXACT_MODEL_CONTENT - 1] = bufs[!cur][0];
-             _efl_ui_exact_model_block_store(&compressed, l, block, bufs[cur]);
+             if (!_efl_ui_exact_model_block_store(&compressed, l, block, bufs[cur]))
+               return EINA_FALSE;
           }
         start = 0;
         if (!next) break;
         l = next;
         cur = !cur;
      }
-   return removed;
+   return EINA_TRUE;
+}
+
+// A block could not be compressed in the middle of a shift, and the lists are
+// no longer in step with the rows. The sizes that are kept are of no use then
+// and a size that is the one of another row is worse than none: they are all
+// forgotten, and every row is one that nobody measured, as it was when the
+// model was made. What the views do for those, they do again.
+static void
+_efl_ui_exact_model_forget(Efl_Ui_Exact_Model_Data *root)
+{
+   ERR("Could not store the sizes of the rows while moving them: they are all forgotten.");
+   _efl_ui_exact_model_compressed_free(root->compressed.width);
+   _efl_ui_exact_model_compressed_free(root->compressed.height);
+   root->compressed.width = NULL;
+   root->compressed.height = NULL;
+   root->total_size.width = 0;
+   root->total_size.height = 0;
 }
 
 // The sizes follow their rows when one comes or goes. The sizes are kept by
@@ -494,15 +522,20 @@ _efl_ui_exact_model_shift(Efl_Ui_Exact_Model_Data *root, unsigned int index, Ein
 
    if (added)
      {
-        _efl_ui_exact_model_list_insert(&root->compressed.width, index);
-        _efl_ui_exact_model_list_insert(&root->compressed.height, index);
+        if (!_efl_ui_exact_model_list_insert(&root->compressed.width, index) ||
+            !_efl_ui_exact_model_list_insert(&root->compressed.height, index))
+          _efl_ui_exact_model_forget(root);
      }
    else
      {
-        unsigned int h;
+        unsigned int w, h;
 
-        _efl_ui_exact_model_list_remove(root->compressed.width, index);
-        h = _efl_ui_exact_model_list_remove(root->compressed.height, index);
+        if (!_efl_ui_exact_model_list_remove(root->compressed.width, index, &w) ||
+            !_efl_ui_exact_model_list_remove(root->compressed.height, index, &h))
+          {
+             _efl_ui_exact_model_forget(root);
+             return;
+          }
         if (h & EFL_UI_EXACT_MODEL_MEASURED)
           root->total_size.height -= h & ~EFL_UI_EXACT_MODEL_MEASURED;
      }
