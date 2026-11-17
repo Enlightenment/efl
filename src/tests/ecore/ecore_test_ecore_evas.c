@@ -2,8 +2,12 @@
 # include <config.h>
 #endif
 
+#include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Efl_Core.h>
+
+#include "ecore_private.h"
+#include "ecore_evas_private.h"
 
 #include "ecore_suite.h"
 
