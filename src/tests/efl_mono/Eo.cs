@@ -832,15 +832,15 @@ class TestEoTeardown
     /// </summary>
     public static void dispose_is_idempotent()
     {
-        var buffer = new Efl.Io.Buffer(null);
-        Test.AssertNotEquals(IntPtr.Zero, buffer.NativeHandle);
+        var obj = new Dummy.TestObject();
+        Test.AssertNotEquals(IntPtr.Zero, obj.NativeHandle);
 
-        buffer.Dispose();
-        Test.AssertEquals(IntPtr.Zero, buffer.NativeHandle);
+        obj.Dispose();
+        Test.AssertEquals(IntPtr.Zero, obj.NativeHandle);
 
         // the one that used to queue a release of nothing
-        buffer.Dispose();
-        Test.AssertEquals(IntPtr.Zero, buffer.NativeHandle);
+        obj.Dispose();
+        Test.AssertEquals(IntPtr.Zero, obj.NativeHandle);
     }
 }
 
