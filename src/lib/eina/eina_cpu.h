@@ -70,6 +70,11 @@ EINA_API extern Eina_Cpu_Features eina_cpu_features;
 /**
  * @brief Cpu features accessor.
  *
+ * Setting the environment variable EINA_CPU_DISABLE before eina_init()
+ * hides features from every EFL library, to rule out or compare a SIMD
+ * path: a comma separated list of mmx, sse, sse2, sse3, ssse3, sse41,
+ * sse42, avx2, altivec, vis, neon and sve, or "all".
+ *
  * @return the current cpu features
  */
 EINA_API Eina_Cpu_Features eina_cpu_features_get(void);

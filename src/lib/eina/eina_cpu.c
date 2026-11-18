@@ -182,9 +182,6 @@ static void
 _arm_cpu_features(Eina_Cpu_Features *features)
 {
    unsigned long aux = getauxval(AT_HWCAP);
-# if defined(__aarch64__)
-   *features |= EINA_CPU_NEON;
-# endif
 # ifdef HWCAP_NEON
    if (aux & HWCAP_NEON) *features |= EINA_CPU_NEON;
 # endif
@@ -218,14 +215,74 @@ _ppc_cpu_features(Eina_Cpu_Features *features)
  */
 EINA_API Eina_Cpu_Features eina_cpu_features = 0;
 
+static void
+_eina_cpu_features_disable(const char *list)
+{
+   static const struct
+   {
+      const char *name;
+      Eina_Cpu_Features feature;
+   } names[] = {
+      { "mmx", EINA_CPU_MMX },
+      { "sse", EINA_CPU_SSE },
+      { "sse2", EINA_CPU_SSE2 },
+      { "sse3", EINA_CPU_SSE3 },
+      { "ssse3", EINA_CPU_SSSE3 },
+      { "sse41", EINA_CPU_SSE41 },
+      { "sse42", EINA_CPU_SSE42 },
+      { "avx2", EINA_CPU_AVX2 },
+      { "altivec", EINA_CPU_ALTIVEC },
+      { "vis", EINA_CPU_VIS },
+      { "neon", EINA_CPU_NEON },
+      { "sve", EINA_CPU_SVE },
+   };
+   const char *token = list;
+   unsigned int i;
+   size_t len;
+
+   if (!strcmp(list, "all"))
+     {
+        eina_cpu_features = 0;
+        return;
+     }
+
+   while (*token)
+     {
+        len = strcspn(token, ",");
+        for (i = 0; i < EINA_C_ARRAY_LENGTH(names); i++)
+          {
+             if ((strlen(names[i].name) == len) &&
+                 !strncmp(token, names[i].name, len))
+               break;
+          }
+        if (i < EINA_C_ARRAY_LENGTH(names))
+          eina_cpu_features &= ~names[i].feature;
+        else if (len)
+          EINA_LOG_WARN("EINA_CPU_DISABLE: unknown cpu feature '%.*s'",
+                        (int)len, token);
+        token += len;
+        if (*token == ',') token++;
+     }
+}
+
 Eina_Bool
 eina_cpu_init(void)
 {
+   const char *disable;
+
+   eina_cpu_features = 0;
 #if defined(__i386__) || defined(__x86_64__)
    _x86_simd(&eina_cpu_features);
 #elif defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && (defined(__arm__) || defined(__aarch64__)) && defined(__linux__)
    _arm_cpu_features(&eina_cpu_features);
 #endif
+#if defined(__aarch64__)
+   /* NEON is mandatory in ARMv8-A, also where there is no auxv to ask. */
+   eina_cpu_features |= EINA_CPU_NEON;
+#endif
+
+   disable = getenv("EINA_CPU_DISABLE");
+   if (disable) _eina_cpu_features_disable(disable);
 
    // Figure out the page size for this system
    _eina_page_size();
