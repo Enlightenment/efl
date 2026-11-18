@@ -55,6 +55,17 @@ test('evas-stable-headers', evas_stable_headers,
   timeout : master_timeout
 )
 
+evas_cpu_disable = executable('evas_cpu_disable',
+  ['evas_test_cpu_disable.c'],
+  dependencies: [evas_bin, evas, evas_ext_none_static_deps, eet], #internal headers, as below
+  c_args : ['-DEVAS_BUILD']
+)
+
+test('evas-cpu-disable', evas_cpu_disable,
+  env : test_env,
+  timeout : master_timeout
+)
+
 # Compares every C/NEON pair in the evas span and point op tables. It includes
 # the op translation units directly rather than linking them, because the copy
 # tables are static; that keeps the library itself untouched. Skips (exit 77)
