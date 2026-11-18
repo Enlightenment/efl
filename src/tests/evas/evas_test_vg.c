@@ -206,9 +206,60 @@ EFL_START_TEST(evas_vg_tiny_surface_cache)
 }
 EFL_END_TEST
 
+// A radial gradient whose focal point lies outside its circle, with the
+// default pad spread, filling the whole canvas.
+//
+// Outside the cone from the focal point to the circle no gradient position
+// exists, so the software rasterizer takes the square root of a negative
+// number there.  Every path maps that NaN to the first stop, except the SSE3
+// pad clamp, which used to let it through as a colour table index of INT_MIN.
+// Float drift does the same for an ordinary radial near its centre, which is
+// how an application with a focal point inside the circle crashed with it.
+static void
+_build_radial_focal_outside(Evas *e)
+{
+   static const Efl_Gfx_Gradient_Stop stops[] = {
+      { 0.0, 255, 0, 0, 255 },
+      { 1.0, 0, 0, 255, 255 },
+   };
+   Eo *vg, *shape, *grad;
+
+   vg = efl_add(EFL_CANVAS_VG_OBJECT_CLASS, e);
+   efl_gfx_entity_size_set(vg, EINA_SIZE2D(WIN_W, WIN_H));
+   efl_gfx_entity_visible_set(vg, EINA_TRUE);
+
+   shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, vg);
+   efl_gfx_path_append_rect(shape, 0, 0, WIN_W, WIN_H, 0, 0);
+
+   grad = efl_add(EFL_CANVAS_VG_GRADIENT_RADIAL_CLASS, vg);
+   efl_gfx_gradient_radial_center_set(grad, 128, 128);
+   efl_gfx_gradient_radial_radius_set(grad, 32);
+   efl_gfx_gradient_radial_focal_set(grad, 8, 8);
+   efl_gfx_gradient_stop_set(grad, stops, EINA_C_ARRAY_LENGTH(stops));
+   efl_canvas_vg_shape_fill_set(shape, grad);
+
+   efl_canvas_vg_object_root_node_set(vg, shape);
+}
+
+EFL_START_TEST(evas_vg_radial_without_solution_pads_to_first_stop)
+{
+   unsigned int px = 0;
+
+   // (250, 8) is seen from the focal point 45 degrees off the line to the
+   // centre, well outside the 11 degree cone the circle subtends.
+   if (!_scene_sample("buffer", _build_radial_focal_outside, 2, 250, 8, &px))
+     return;
+
+   ck_assert_msg((((px >> 16) & 0xff) > 200) && ((px & 0xff) < 50),
+                 "no gradient solution should pad to the first stop (red), "
+                 "got %08x", px);
+}
+EFL_END_TEST
+
 void evas_test_vg(TCase *tc)
 {
    tcase_add_test(tc, evas_vg_mixed_sizes_group_opacity);
    tcase_add_test(tc, evas_vg_container_alpha_is_applied);
    tcase_add_test(tc, evas_vg_tiny_surface_cache);
+   tcase_add_test(tc, evas_vg_radial_without_solution_pads_to_first_stop);
 }

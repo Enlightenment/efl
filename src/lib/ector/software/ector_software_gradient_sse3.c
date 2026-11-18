@@ -25,9 +25,12 @@ typedef union { __m128 v; float f[4];} vec4_f;
   __m128i v_index_i_inv = _mm_sub_epi32(v_reflect_limit, v_index_i); \
   index_vec.v = _mm_min_epi16(v_index_i, v_index_i_inv);
 
+/* maxps returns its second operand when either one is NaN, so v_index must
+ * come first: a lane with no gradient solution (sqrt of a negative det) then
+ * pads to index 0, as the scalar path does, instead of becoming INT_MIN. */
 #define FETCH_CLAMP_PAD_F \
   vec4_i index_vec; \
-  index_vec.v = _mm_cvttps_epi32(_mm_min_ps(v_max, _mm_max_ps(v_min, v_index)));
+  index_vec.v = _mm_cvttps_epi32(_mm_min_ps(v_max, _mm_max_ps(v_index, v_min)));
 
 #define FETCH_EPILOGUE_CPY \
   *buffer++ = g_data->color_table[index_vec.i[0]]; \
