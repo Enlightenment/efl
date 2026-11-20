@@ -150,6 +150,7 @@ struct _Ecore_Fd_Handler
    Eina_Bool               delete_me : 1;
    Eina_Bool               file : 1;
    Eina_Bool               legacy : 1;
+   Eina_Bool               with_prep : 1;
 };
 GENERIC_ALLOC_SIZE_DECLARE(Ecore_Fd_Handler);
 
@@ -175,6 +176,7 @@ static int  _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout);
 #endif
 static void _ecore_main_prepare_handlers(Eo *obj, Efl_Loop_Data *pd);
 static void _ecore_main_fd_handlers_cleanup(Eo *obj, Efl_Loop_Data *pd);
+static void _ecore_main_fd_handler_prep_unlist(Efl_Loop_Data *pd, Ecore_Fd_Handler *fdh);
 #ifndef _WIN32
 # ifndef USE_G_MAIN_LOOP
 static void _ecore_main_fd_handlers_bads_rem(Eo *obj, Efl_Loop_Data *pd);
@@ -1434,9 +1436,7 @@ _ecore_main_fd_handler_del(Eo *obj EINA_UNUSED,
         _ecore_main_fdh_poll_del(pd, fd_handler);
         pd->fd_handlers_to_delete = eina_list_append
           (pd->fd_handlers_to_delete, fd_handler);
-        if (fd_handler->prep_func && pd->fd_handlers_with_prep)
-          pd->fd_handlers_with_prep = eina_list_remove
-            (pd->fd_handlers_with_prep, fd_handler);
+        _ecore_main_fd_handler_prep_unlist(pd, fd_handler);
         if (fd_handler->buf_func && pd->fd_handlers_with_buffer)
           pd->fd_handlers_with_buffer = eina_list_remove
             (pd->fd_handlers_with_buffer, fd_handler);
@@ -1620,12 +1620,15 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler,
      }
    fd_handler->prep_func = func;
    fd_handler->prep_data = (void *)data;
-   if ((!pd->fd_handlers_with_prep) ||
-       (pd->fd_handlers_with_prep &&
-        (!eina_list_data_find(pd->fd_handlers_with_prep, fd_handler))))
-     // FIXME: THIS WILL NOT SCALE WITH LOTS OF PREP FUNCTIONS!!!
-     pd->fd_handlers_with_prep = eina_list_append
-       (pd->fd_handlers_with_prep, fd_handler);
+   if (!func)
+     _ecore_main_fd_handler_prep_unlist(pd, fd_handler);
+   else if (!fd_handler->with_prep)
+     {
+        // FIXME: THIS WILL NOT SCALE WITH LOTS OF PREP FUNCTIONS!!!
+        pd->fd_handlers_with_prep = eina_list_append
+          (pd->fd_handlers_with_prep, fd_handler);
+        fd_handler->with_prep = EINA_TRUE;
+     }
 }
 
 EAPI int
@@ -1684,6 +1687,15 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler      *fd_handler,
          fd_handler->fd, fd_handler->loop_data, strerror(errno));
 }
 
+static void
+_ecore_main_fd_handlers_with_prep_free(Efl_Loop_Data *pd)
+{
+   Ecore_Fd_Handler *fdh;
+
+   EINA_LIST_FREE(pd->fd_handlers_with_prep, fdh)
+     fdh->with_prep = EINA_FALSE;
+}
+
 void
 _ecore_main_content_clear(Eo *obj, Efl_Loop_Data *pd)
 {
@@ -1708,9 +1720,7 @@ _ecore_main_content_clear(Eo *obj, Efl_Loop_Data *pd)
    if (pd->fd_handlers_with_buffer)
      pd->fd_handlers_with_buffer =
        eina_list_free(pd->fd_handlers_with_buffer);
-   if (pd->fd_handlers_with_prep)
-     pd->fd_handlers_with_prep =
-       eina_list_free(pd->fd_handlers_with_prep);
+   _ecore_main_fd_handlers_with_prep_free(pd);
    if (pd->file_fd_handlers)
      pd->file_fd_handlers =
        eina_list_free(pd->file_fd_handlers);
@@ -1759,30 +1769,48 @@ _ecore_main_shutdown(void)
      }
 }
 
+// A prepare callback may delete any fd handler or clear its prepare
+// callback, the next one in the walk included. So nothing leaves the list
+// while it is walked: the outermost walk sweeps the list once it is done.
+static void
+_ecore_main_fd_handler_prep_unlist(Efl_Loop_Data *pd, Ecore_Fd_Handler *fdh)
+{
+   if (!fdh->with_prep) return;
+   if (pd->fd_handlers_with_prep_walking)
+     {
+        pd->fd_handlers_with_prep_dirty = EINA_TRUE;
+        return;
+     }
+   pd->fd_handlers_with_prep = eina_list_remove
+     (pd->fd_handlers_with_prep, fdh);
+   fdh->with_prep = EINA_FALSE;
+}
+
 static void
 _ecore_main_prepare_handlers(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
 {
    Ecore_Fd_Handler *fdh;
    Eina_List *l, *l2;
 
-   // call the prepare callback for all handlers with prep functions
+   pd->fd_handlers_with_prep_walking++;
+   EINA_LIST_FOREACH(pd->fd_handlers_with_prep, l, fdh)
+     {
+        if (fdh->delete_me || !fdh->prep_func) continue;
+        fdh->references++;
+        _ecore_call_prep_cb(fdh->prep_func, fdh->prep_data, fdh);
+        fdh->references--;
+     }
+   pd->fd_handlers_with_prep_walking--;
+
+   if (pd->fd_handlers_with_prep_walking) return;
+   if (!pd->fd_handlers_with_prep_dirty) return;
+   pd->fd_handlers_with_prep_dirty = EINA_FALSE;
    EINA_LIST_FOREACH_SAFE(pd->fd_handlers_with_prep, l, l2, fdh)
      {
-        if (!fdh)
-          {
-             pd->fd_handlers_with_prep = eina_list_remove_list
-               (l, pd->fd_handlers_with_prep);
-             continue;
-          }
-        if (!fdh->delete_me && fdh->prep_func)
-          {
-             fdh->references++;
-             _ecore_call_prep_cb(fdh->prep_func, fdh->prep_data, fdh);
-             fdh->references--;
-          }
-        else
-          pd->fd_handlers_with_prep = eina_list_remove_list
-            (pd->fd_handlers_with_prep, l);
+        if (!fdh->delete_me && fdh->prep_func) continue;
+        pd->fd_handlers_with_prep = eina_list_remove_list
+          (pd->fd_handlers_with_prep, l);
+        fdh->with_prep = EINA_FALSE;
      }
 }
 
@@ -2114,14 +2142,14 @@ _ecore_main_fd_handlers_cleanup(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
              continue;
           }
         if (fdh->references) continue;
+        // iterating from a prepare callback: the walk still holds its node
+        if (fdh->with_prep && pd->fd_handlers_with_prep_walking) continue;
         if (pd->fd_handlers_to_call_current == fdh)
           pd->fd_handlers_to_call_current = NULL;
         if (fdh->buf_func && pd->fd_handlers_with_buffer)
           pd->fd_handlers_with_buffer = eina_list_remove
             (pd->fd_handlers_with_buffer, fdh);
-        if (fdh->prep_func && pd->fd_handlers_with_prep)
-          pd->fd_handlers_with_prep = eina_list_remove
-           (pd->fd_handlers_with_prep, fdh);
+        _ecore_main_fd_handler_prep_unlist(pd, fdh);
         pd->fd_handlers = (Ecore_Fd_Handler *)
           eina_inlist_remove(EINA_INLIST_GET(pd->fd_handlers),
                              EINA_INLIST_GET(fdh));
@@ -2273,6 +2301,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t *handle EINA_UNUSED)
    if ((pd->in_loop == 0) && (pd->do_quit))
      {
         _ecore_main_fd_handlers_cleanup(obj, pd);
+        _ecore_main_fd_handlers_with_prep_free(pd);
 
         while (pd->fd_handlers)
           {
@@ -2287,8 +2316,6 @@ _ecore_main_loop_uv_prepare(uv_prepare_t *handle EINA_UNUSED)
           }
        if (pd->fd_handlers_with_buffer)
          pd->fd_handlers_with_buffer = eina_list_free(pd->fd_handlers_with_buffer);
-       if (pd->fd_handlers_with_prep)
-         pd->fd_handlers_with_prep = eina_list_free(pd->fd_handlers_with_prep);
        if (pd->fd_handlers_to_delete)
          pd->fd_handlers_to_delete = eina_list_free(pd->fd_handlers_to_delete);
        if (pd->file_fd_handlers)

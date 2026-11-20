@@ -125,6 +125,7 @@ struct _Efl_Loop_Data
    Eina_List           *fd_handlers_to_delete;
    Ecore_Fd_Handler    *fd_handlers_to_call;
    Ecore_Fd_Handler    *fd_handlers_to_call_current;
+   unsigned int         fd_handlers_with_prep_walking;
 
 # ifdef _WIN32
    Ecore_Win32_Handler *win32_handlers;
@@ -169,6 +170,7 @@ struct _Efl_Loop_Data
 
    Eina_Bool            do_quit : 1;
    Eina_Bool            quit_on_last_thread_child_del : 1;
+   Eina_Bool            fd_handlers_with_prep_dirty : 1;
 };
 
 struct _Efl_Task_Data

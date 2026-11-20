@@ -19,6 +19,7 @@
 #include <Ecore.h>
 
 #include "ecore_suite.h"
+#include "ecore_private.h"
 
 #define ECORE_EVENT_CUSTOM_1 1
 #define ECORE_EVENT_CUSTOM_2 2
@@ -354,6 +355,210 @@ EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_activate_modify)
 
    fail_if(did != EINA_TRUE);
 
+}
+EFL_END_TEST
+
+static void
+_prepare_null_quit_job_cb(void *data EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+}
+
+// Efl_Loop_Handler sets a NULL prepare callback on every fd handler it
+// creates, and deletes the handler without ever setting a real one.
+static void
+_prepare_null_del_job_cb(void *data)
+{
+   Efl_Loop_Data *pd = efl_data_scope_get(efl_main_loop_get(),
+                                          EFL_LOOP_CLASS);
+   Ecore_Fd_Handler *fdh;
+   int *fd = data;
+
+   fdh = ecore_main_fd_handler_add(*fd, ECORE_FD_READ, _fd_handler_cb,
+                                   NULL, NULL, NULL);
+   ck_assert_ptr_nonnull(fdh);
+   ecore_main_fd_handler_prepare_callback_set(fdh, NULL, NULL);
+   ecore_main_fd_handler_del(fdh);
+   ck_assert(!eina_list_data_find(pd->fd_handlers_with_prep, fdh));
+   ecore_job_add(_prepare_null_quit_job_cb, NULL);
+}
+
+// The handler is freed at the end of the iteration that runs the first job,
+// so it must be off the prepare list once deleted. The next iteration
+// prepares its fd handlers before it runs the second job: a memory checker
+// sees the read of the freed handler if it is still there.
+EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_prepare_null_del)
+{
+   int comm[2];
+
+   fail_if(pipe(comm) != 0);
+
+   ecore_job_add(_prepare_null_del_job_cb, &comm[0]);
+   ecore_main_loop_begin();
+
+   close(comm[0]);
+   close(comm[1]);
+}
+EFL_END_TEST
+
+typedef struct
+{
+   Ecore_Fd_Handler *fdh[3];
+   int               prepared[3];
+} Prepare_Del_Data;
+
+static void
+_prepare_del_next_cb(void *data, Ecore_Fd_Handler *fdh)
+{
+   Prepare_Del_Data *pdd = data;
+   int i;
+
+   for (i = 0; i < 3; i++)
+     if (pdd->fdh[i] == fdh) pdd->prepared[i]++;
+   if ((fdh == pdd->fdh[0]) && (pdd->fdh[1]))
+     {
+        ecore_main_fd_handler_del(pdd->fdh[1]);
+        pdd->fdh[1] = NULL;
+     }
+}
+
+static Eina_Bool
+_prepare_del_next_read_cb(void *data, Ecore_Fd_Handler *fdh EINA_UNUSED)
+{
+   Eina_Bool *did = data;
+
+   *did = EINA_TRUE;
+   ecore_main_loop_quit();
+   return ECORE_CALLBACK_RENEW;
+}
+
+// The first prepare callback deletes the handler that comes next in the
+// prepare walk. The walk has to skip it and still reach the third one.
+// A walk that loses its next node can spin forever instead of failing an
+// assertion: the suite timeout catches that.
+EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_prepare_del_next)
+{
+   Prepare_Del_Data pdd = { { NULL }, { 0 } };
+   Eina_Bool did = EINA_FALSE;
+   int comm[3][2];
+   int i;
+
+   for (i = 0; i < 3; i++)
+     {
+        fail_if(pipe(comm[i]) != 0);
+        pdd.fdh[i] = ecore_main_fd_handler_add
+          (comm[i][0], ECORE_FD_READ, _prepare_del_next_read_cb, &did,
+           NULL, NULL);
+        ck_assert_ptr_nonnull(pdd.fdh[i]);
+        ecore_main_fd_handler_prepare_callback_set
+          (pdd.fdh[i], _prepare_del_next_cb, &pdd);
+     }
+   fail_if(write(comm[2][1], "x", 1) != 1);
+
+   ecore_main_loop_begin();
+
+   ck_assert(did);
+   ck_assert_int_ge(pdd.prepared[0], 1);
+   ck_assert_int_eq(pdd.prepared[1], 0);
+   ck_assert_int_ge(pdd.prepared[2], 1);
+
+   ecore_main_fd_handler_del(pdd.fdh[0]);
+   ecore_main_fd_handler_del(pdd.fdh[2]);
+   for (i = 0; i < 3; i++)
+     {
+        close(comm[i][0]);
+        close(comm[i][1]);
+     }
+}
+EFL_END_TEST
+
+typedef struct
+{
+   Ecore_Fd_Handler *fdh[4];
+   int               prepared[4];
+   int               fd;
+   int               depth;
+   Eina_Bool         nested_done;
+} Prepare_Nested_Data;
+
+static Eina_Bool
+_prepare_nested_read_cb(void *data EINA_UNUSED,
+                        Ecore_Fd_Handler *fdh EINA_UNUSED)
+{
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_prepare_nested_cb(void *data, Ecore_Fd_Handler *fdh)
+{
+   Prepare_Nested_Data *pnd = data;
+   int i;
+
+   for (i = 0; i < 4; i++)
+     if (pnd->fdh[i] == fdh) pnd->prepared[i]++;
+
+   if ((fdh == pnd->fdh[0]) && (!pnd->depth) && (!pnd->nested_done))
+     {
+        pnd->depth++;
+        ecore_main_fd_handler_del(pnd->fdh[1]);
+        pnd->fdh[1] = NULL;
+        ecore_main_fd_handler_prepare_callback_set(pnd->fdh[2], NULL, NULL);
+        ecore_main_fd_handler_prepare_callback_set
+          (pnd->fdh[2], _prepare_nested_cb, pnd);
+        pnd->fdh[3] = ecore_main_fd_handler_add
+          (pnd->fd, ECORE_FD_READ, _prepare_nested_read_cb, NULL, NULL, NULL);
+        ck_assert_ptr_nonnull(pnd->fdh[3]);
+        ecore_main_fd_handler_prepare_callback_set
+          (pnd->fdh[3], _prepare_nested_cb, pnd);
+        ecore_main_loop_iterate();
+        pnd->depth--;
+        pnd->nested_done = EINA_TRUE;
+     }
+   else if ((fdh == pnd->fdh[2]) && (!pnd->depth) && (pnd->nested_done))
+     ecore_main_loop_quit();
+}
+
+// The first prepare callback, in the middle of the walk, deletes the next
+// handler, clears and restores the callback of the one after, adds a new
+// handler and runs a nested iteration, so a nested walk and its cleanup run
+// while the outer walk holds its nodes. The readable pipe keeps the loop
+// from sleeping.
+EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_prepare_nested)
+{
+   Prepare_Nested_Data pnd = { { NULL }, { 0 }, -1, 0, EINA_FALSE };
+   int comm[4][2];
+   int i;
+
+   for (i = 0; i < 4; i++)
+     fail_if(pipe(comm[i]) != 0);
+   pnd.fd = comm[3][0];
+   for (i = 0; i < 3; i++)
+     {
+        pnd.fdh[i] = ecore_main_fd_handler_add
+          (comm[i][0], ECORE_FD_READ, _prepare_nested_read_cb, NULL,
+           NULL, NULL);
+        ck_assert_ptr_nonnull(pnd.fdh[i]);
+        ecore_main_fd_handler_prepare_callback_set
+          (pnd.fdh[i], _prepare_nested_cb, &pnd);
+     }
+   fail_if(write(comm[2][1], "x", 1) != 1);
+
+   ecore_main_loop_begin();
+
+   ck_assert(pnd.nested_done);
+   ck_assert_int_ge(pnd.prepared[0], 2);
+   ck_assert_int_eq(pnd.prepared[1], 0);
+   ck_assert_int_ge(pnd.prepared[2], 2);
+   ck_assert_int_ge(pnd.prepared[3], 2);
+
+   ecore_main_fd_handler_del(pnd.fdh[0]);
+   ecore_main_fd_handler_del(pnd.fdh[2]);
+   ecore_main_fd_handler_del(pnd.fdh[3]);
+   for (i = 0; i < 4; i++)
+     {
+        close(comm[i][0]);
+        close(comm[i][1]);
+     }
 }
 EFL_END_TEST
 
@@ -695,6 +900,9 @@ void ecore_test_ecore(TCase *tc)
 #endif
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_valid_flags);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_activate_modify);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_prepare_null_del);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_prepare_del_next);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_prepare_nested);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event);
 #if 0
    tcase_add_test(tc, ecore_test_ecore_main_loop_timer_inner);
