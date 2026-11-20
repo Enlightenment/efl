@@ -2645,6 +2645,31 @@ EAPI void           ecore_x_dpms_force(Eina_Bool on);
 EAPI Eina_Bool      ecore_x_test_fake_key_down(const char *key);
 EAPI Eina_Bool      ecore_x_test_fake_key_up(const char *key);
 EAPI Eina_Bool      ecore_x_test_fake_key_press(const char *key);
+/**
+ * Moves the pointer to x,y on the root window, as input from a device:
+ * the motion goes to whoever has the pointer grabbed.
+ * @param x The x coordinate on the root window.
+ * @param y The y coordinate on the root window.
+ * @return @c EINA_TRUE if the event was sent, @c EINA_FALSE otherwise, as
+ * when the XTest extension is not available.
+ * @since 1.30
+ */
+EAPI Eina_Bool      ecore_x_test_fake_mouse_move(int x, int y);
+/**
+ * Presses a pointer button where the pointer is, as a real device would:
+ * the server delivers it, and takes the implicit grab, as for a real press.
+ * @param button The button, from 1.
+ * @return @c EINA_TRUE if the event was sent, @c EINA_FALSE otherwise.
+ * @since 1.30
+ */
+EAPI Eina_Bool      ecore_x_test_fake_mouse_down(int button);
+/**
+ * Releases a pointer button pressed with ecore_x_test_fake_mouse_down().
+ * @param button The button, from 1.
+ * @return @c EINA_TRUE if the event was sent, @c EINA_FALSE otherwise.
+ * @since 1.30
+ */
+EAPI Eina_Bool      ecore_x_test_fake_mouse_up(int button);
 EAPI const char    *ecore_x_keysym_string_get(int keysym);
 
 /**

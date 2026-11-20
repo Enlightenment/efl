@@ -147,6 +147,54 @@ ecore_x_test_fake_key_press(const char *key EINA_UNUSED)
 #endif /* ifdef ECORE_XTEST */
 }
 
+EAPI Eina_Bool
+#ifdef ECORE_XTEST
+ecore_x_test_fake_mouse_move(int x, int y)
+#else
+ecore_x_test_fake_mouse_move(int x EINA_UNUSED, int y EINA_UNUSED)
+#endif
+{
+#ifdef ECORE_XTEST
+   LOGFN;
+   /* -1: the screen the pointer is on */
+   return XTestFakeMotionEvent(_ecore_x_disp, -1, x, y, 0) ? EINA_TRUE : EINA_FALSE;
+#else /* ifdef ECORE_XTEST */
+   return EINA_FALSE;
+#endif /* ifdef ECORE_XTEST */
+}
+
+EAPI Eina_Bool
+#ifdef ECORE_XTEST
+ecore_x_test_fake_mouse_down(int button)
+#else
+ecore_x_test_fake_mouse_down(int button EINA_UNUSED)
+#endif
+{
+#ifdef ECORE_XTEST
+   LOGFN;
+   if (button < 1) return EINA_FALSE;
+   return XTestFakeButtonEvent(_ecore_x_disp, button, 1, 0) ? EINA_TRUE : EINA_FALSE;
+#else /* ifdef ECORE_XTEST */
+   return EINA_FALSE;
+#endif /* ifdef ECORE_XTEST */
+}
+
+EAPI Eina_Bool
+#ifdef ECORE_XTEST
+ecore_x_test_fake_mouse_up(int button)
+#else
+ecore_x_test_fake_mouse_up(int button EINA_UNUSED)
+#endif
+{
+#ifdef ECORE_XTEST
+   LOGFN;
+   if (button < 1) return EINA_FALSE;
+   return XTestFakeButtonEvent(_ecore_x_disp, button, 0, 0) ? EINA_TRUE : EINA_FALSE;
+#else /* ifdef ECORE_XTEST */
+   return EINA_FALSE;
+#endif /* ifdef ECORE_XTEST */
+}
+
 EAPI const char *
 ecore_x_keysym_string_get(int keysym)
 {
